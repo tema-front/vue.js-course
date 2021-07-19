@@ -3,19 +3,28 @@
         <!-- кнопка отображения окна для добавления данных -->
         <button class="btnModal btnAddNewCost" @click="modalWindowVisible">add new cost</button>
         <div class="modalBlock" v-if="modalWindow">
-            <input type="text" v-model="date" placeholder="Date" class="enterDatas">
-            <input type="text" v-model="category" placeholder="Category" class="enterDatas">
+            <input type="text" v-model.trim="date" placeholder="Date" class="enterDatas">
+            <input type="text" v-model.trim="category" placeholder="Category" class="enterDatas" list="categoryList">
+                <datalist id="categoryList">
+                    <select v-model="selected">
+                        <option v-for="(option, idx) in getCategoryList" :key="idx" :value="option">
+                            {{ option }}
+                        </option>
+                    </select>
+                </datalist>
             <input type="number" v-model.number="value" placeholder="Value" class="enterDatas">
             <button @click="onClick" class="btnAddNewCost">add</button>
         </div>
 
+
+
+
     </div>
-
-
-    
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
     name: "AddPayment",
     data: () => ({
@@ -23,13 +32,15 @@ export default {
         category: "",
         value: null,
         button: "",
-        modalWindow: false
+        modalWindow: false,
+        selected: ''
     }),
 
 
     methods: {
         onClick() {
             const { category, value } = this
+            // const data = [this.date || this.getCurrentDate, category, value]
             const data = {
                 date: this.date || this.getCurrentDate,
                 category,
@@ -47,6 +58,14 @@ export default {
     },
 
     computed: {
+        ...mapGetters([
+            'getCategoryList'
+        ]),
+
+        ...mapActions([
+            'loadCategories'
+        ]),
+
         getCurrentDate() {
             const today = new Date();
             let day = today.getDate(); 
@@ -63,6 +82,12 @@ export default {
     
             return `${day}.${month}.${year}`
         }
+    },
+
+    mounted() {
+        if (!this.getCategoryList.length) {
+            this.loadCategories
+        }
     }
 }
 </script>
@@ -77,7 +102,6 @@ export default {
         border: 0;
         color: white;
         border-radius: 3px;
-        margin-left: 70px;
         margin-bottom: 20px;
     }
 
@@ -97,7 +121,7 @@ export default {
         flex-direction: column;
         box-sizing: border-box;
         padding: 20px;
-        margin: 0 0 20px 70px;
+        margin: 0 0 20px;
     }
 
     .enterDatas {

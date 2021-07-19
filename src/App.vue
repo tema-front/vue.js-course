@@ -7,6 +7,8 @@
       <br>
       <AddPayment @addNewPayment="addData"/>
       <PaymentsDisplay :list="paymentsList"/>
+      <br>
+      <div class="totalCost">total: {{ getFPV }}</div>
     </main>
   </div>
 
@@ -16,6 +18,7 @@
 import PaymentsDisplay from './components/PaymentsDisplay.vue'
 import AddPayment from './components/AddPayment.vue'
 
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 
 export default {
 
@@ -26,19 +29,43 @@ export default {
   },
 
   data: () => ({
-    paymentsList: [],
-    counter: 0,
   }),
 
   methods: {
 
-    addData(data) {
-      this.counter++; // счётчик строк в таблице
-      // в главный массив добавляю массивы с данными. Новые данные - новый массив
-      this.paymentsList.push(new Array(String(this.counter), data.date, data.category, data.value));
-      console.log(this.paymentsList);
-    }
+    ...mapMutations([
+      'setDataPaymentsList',
+      'addDataToPaymentsList'
+    ]),
 
+    addData(data) {
+      this.addDataToPaymentsList(data)
+    },
+
+  },  
+
+  computed: {
+
+    ...mapGetters([
+      'getPaymentPagination',
+      'getFullPaymentValue'
+    ]),
+
+    ...mapActions([
+      'fetchData',
+    ]),
+
+    getFPV(){
+      return this.getFullPaymentValue
+    },
+
+    paymentsList() {
+      return this.getPaymentPagination
+    }
+  },
+
+  created() {
+    this.fetchData;
   }
 
 }
@@ -54,5 +81,12 @@ export default {
     text-align: center;
     text-transform: uppercase;
     font-family: sans-serif;
+  }
+
+  .totalCost {
+    text-align: left;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: bold;
   }
 </style>

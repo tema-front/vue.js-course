@@ -28,18 +28,14 @@ export default {
     AddPayment
   },
 
-  data: () => ({
-  }),
-
   methods: {
 
     ...mapMutations([
-      'setDataPaymentsList',
-      'addDataToPaymentsList'
+      'addDataToPaymentsListMT'
     ]),
 
     addData(data) {
-      this.addDataToPaymentsList(data)
+      this.addDataToPaymentsListMT(data)
     },
 
   },  
@@ -47,25 +43,26 @@ export default {
   computed: {
 
     ...mapGetters([
-      'getPaymentPagination',
-      'getFullPaymentValue'
+      'getPaymentPaginationGT',
+      'getFullPaymentValueGT'
     ]),
 
     ...mapActions([
-      'fetchData',
+      'loadDataAC',
     ]),
 
     getFPV(){
-      return this.getFullPaymentValue
+      return this.getFullPaymentValueGT
     },
 
     paymentsList() {
-      return this.getPaymentPagination
+      return this.getPaymentPaginationGT
     }
+
   },
 
   created() {
-    this.fetchData;
+    this.loadDataAC;
   }
 
 }

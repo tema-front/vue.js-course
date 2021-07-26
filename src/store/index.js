@@ -7,27 +7,32 @@ export default new Vuex.Store({
     state: {
         paymentsList: [],
         paymentPagination: [],
-        categoryList: []
+        categoryList: [],
+        currentNumberButton: 1,
+        quntityButtons: 3
     },
 
     mutations: {
-        setDataPaymentsList(state, payload) {
+
+        setDataPaymentsListMT(state, payload) {
             for (let page in payload) {
                 for (let i = 0; i < payload[page].length; i++)
                 state.paymentsList.push(payload[page][i])
             }
         },
 
-        addDataToPaymentsList(state, payload) {
+        addDataToPaymentsListMT(state, payload) {
             state.paymentsList.push(payload)
+            state.quntityButtons = Math.ceil(state.paymentsList.length / 3)
         },
 
-        setCategories(state, payload) {
+        setCategoriesMT(state, payload) {
             state.categoryList.push(...payload)
         },
 
-        setPagination(state, payload) {
-            state.paymentPagination = []
+        setPaginationMT(state, payload) {
+            state.currentNumberButton = payload;
+            state.paymentPagination = [];
             for (let i = (payload - 1) * 3; i < payload * 3; i++) {
                 state.paymentPagination.push(state.paymentsList[i])
             }
@@ -37,12 +42,11 @@ export default new Vuex.Store({
 
     actions: {
 
-        fetchData({commit}) {
+        loadDataAC({commit}) {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     resolve(
                         {
- 
                             page1: [
                               {date: "20.03.2020", category: "Food", value: 169},
                               {date: "21.03.2020", category: "Navigation", value: 50},
@@ -58,36 +62,35 @@ export default new Vuex.Store({
                               {date: '03.09.2021', category: 'Helth', value: 2200},
                               {date: '25.11.2021', category: 'Car', value: 655000}
                             ]
-                        
                         } 
-                          
-
                     )
                 }, 1000)
             }).then(res => {
-                commit('setDataPaymentsList', res);
-                commit('setPagination', 1);
+                commit('setDataPaymentsListMT', res);
+                commit('setPaginationMT', 1);
             })
         },
         
-        loadCategories({commit}) {
+        loadCategoriesAC({commit}) {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     resolve(['Food', 'Car', 'Vacation', 'Helth', 'Pet', 'Furniture'])
                 }, 1000)
             }).then(res => {
-                commit('setCategories', res)
+                commit('setCategoriesMT', res)
             })
         }
 
     },
 
     getters: {
-        getPaymentPagination: state => [...state.paymentPagination],
-        getCategoryList: state => state.categoryList,
-        getFullPaymentValue: state => {
+        getPaymentPaginationGT: state => [...state.paymentPagination],
+        getCategoryListGT: state => state.categoryList,
+        getCurrentNumberButtonGT: state => state.currentNumberButton,
+        getQuntityButtonsGT: state => state.quntityButtons,
+        getPaymentListGT: state => state.paymentsList, // походу нигде не юзаю, проверю и удалю
+        getFullPaymentValueGT: state => {
             return state.paymentsList.reduce((result, current)=> result + current.value, 0)
         }
-
     }
 })

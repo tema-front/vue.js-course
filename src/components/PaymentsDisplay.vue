@@ -9,8 +9,8 @@
                     <th>Value</th>
                 </tr>     
 
-                <tr v-for="(array, idx) in list" :key="idx">
-                    <th class="tableItem">{{ idx  + 1}}</th>
+                <tr v-for="(array, idx) in getPLL" :key="idx">
+                    <th class="tableItem">{{ getCounter() + idx}}</th>
                     <th class="tableItem" v-for="(item, idx) in array" :key="idx">{{ item }}</th>
                 </tr>
             </table>
@@ -18,9 +18,7 @@
             <div class="paginationBlock">
                 <button class="paginationSymbol left" @click="addPagination">&#60;</button>
                     <div class="paginationNumberBlock">
-                        <button class="paginationSymbol paginationNumber" @click="addPagination($event)">1</button>
-                        <button class="paginationSymbol paginationNumber" @click="addPagination($event)">2</button>
-                        <button class="paginationSymbol paginationNumber" @click="addPagination($event)">3</button>
+                        <button class="paginationSymbol paginationNumber" @click="addPagination($event)" v-for="(number, idx) in getQB" :key="idx">{{ number }}</button>
                     </div>
                 <button class="paginationSymbol right" @click="addPagination">&#62;</button>
             </div>
@@ -30,13 +28,13 @@
 
 <script>
 
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
 
     name: "PaymentsDisplay",
     data: () => ({
-        currentButton: 1
+
     }),
     props: {
         list: {
@@ -46,26 +44,63 @@ export default {
 
     methods: {
         ...mapMutations([
-            'setPagination',
-            'downPagination',
-            'upPagination'
+            'setPaginationMT',
         ]),
 
         addPagination(event) {
-            debugger
-            if (event.target.innerText == "<" && this.currentButton != 1) {
-                this.currentButton--;
-                this.setPagination(this.currentButton)
+            if (event.target.innerText == "<" && this.getCNB != 1) {
+                this.setPaginationMT(this.getCNB - 1);
+                // this.setColor(event);
                 return
-            } else if (event.target.innerText == ">" && this.currentButton != 3) {
-                this.currentButton++;
-                this.setPagination(this.currentButton) 
+            } else if (event.target.innerText == ">" && this.getCNB != this.getQB) {
+                this.setPaginationMT(this.getCNB + 1);
+                // this.setColor(event);
                 return
-            } else if (Number(event.target.innerText)) this.setPagination(event.target.innerText)
+            } else if (Number(event.target.innerText)) {
+                debugger
+                this.setPaginationMT(event.target.innerText);
+                this.setColor(event);
+                // event.target.classList.add('clickPaginationTrue');
+            } else this.setErrorColor(event)
+        },
+
+        setErrorColor(event) {
+            event.target.classList.add('clickPaginationFalse')
+        },
+
+        // setColor(event) {
+        //     debugger
+        //     if (event.target.classList.contains('clickPaginationTrue')) {
+    
+        //     } else event.target.classList.add('clickPaginationTrue');
+        // },
+
+        getCounter() {
+            if (this.getCNB == 1) return 1
+            return this.getCNB * 2 + (this.getCNB - 2)
         }
     },
 
+    computed: {
+        ...mapGetters([
+            'getCurrentNumberButtonGT',
+            'getQuntityButtonsGT',
+        ]),
 
+        getCNB() {
+            return Number(this.getCurrentNumberButtonGT)
+        },
+
+        getQB() {
+            return this.getQuntityButtonsGT
+        },
+
+        getPLL() {
+            return this.list 
+        },
+
+
+    }
 }
 </script>
 
@@ -97,7 +132,6 @@ export default {
     .paginationBlock {
         width: 100%;
         margin: 0 auto;
-        border: 1px solid #000;
         display: flex;
     }
 
@@ -108,7 +142,19 @@ export default {
         margin: 0 auto;
     }
 
+    .paginationSymbol:active {
+        color: aquamarine;
+    }
+
     .paginationNumber {
         margin-right: 5px;
+    }
+
+    .clickPaginationTrue {
+        color: aquamarine;
+    }
+
+    .clickPaginationFalse:active {
+        color: red;
     }
 </style>

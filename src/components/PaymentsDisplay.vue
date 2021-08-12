@@ -1,5 +1,5 @@
 <template>
-  <div class="payments-list">
+
         <div class="tableBlock">
             <table class="tableCost">
                 <tr>
@@ -16,14 +16,14 @@
             </table>
 
             <div class="paginationBlock">
-                <button class="paginationSymbol left" @click="addPagination">&#60;</button>
+                <button class="paginationSymbol left" @click="addPagination($event, $route)">&#60;</button>
                     <div class="paginationNumberBlock">
-                        <button class="paginationSymbol paginationNumber" @click="addPagination($event)" v-for="(number, idx) in getQB" :key="idx">{{ number }}</button>
+                        <button class="paginationSymbol paginationNumber" @click="addPagination($event, $route)" v-for="(number, idx) in getQB" :key="idx">{{ number }}</button>
                     </div>
-                <button class="paginationSymbol right" @click="addPagination">&#62;</button>
+                <button class="paginationSymbol right" @click="addPagination($event, $route)" @updatePaymentPagination="updatePagination()">&#62;</button>
             </div>
         </div>
-  </div>
+
 </template>
 
 <script>
@@ -47,29 +47,39 @@ export default {
             'setPaginationMT',
         ]),
 
-        addPagination(event) {
+        
+        addPagination(event, route) {
+                
+            
             if (event.target.innerText == "<" && this.getCNB != 1) {
+                route.params.page = String(this.getCNB - 1)
                 this.setPaginationMT(this.getCNB - 1);
                 // this.setColor(event);
                 return
             } else if (event.target.innerText == ">" && this.getCNB != this.getQB) {
+                route.params.page = String(this.getCNB + 1)
                 this.setPaginationMT(this.getCNB + 1);
                 // this.setColor(event);
                 return
             } else if (Number(event.target.innerText)) {
-                debugger
+                route.params.page = event.target.innerText;
                 this.setPaginationMT(event.target.innerText);
-                this.setColor(event);
+                // this.setColor(event);
                 // event.target.classList.add('clickPaginationTrue');
             } else this.setErrorColor(event)
         },
 
-        setErrorColor(event) {
+        updatePagination(event) {
+            
+            if (event) console.log(123);
+        },
+
+        setErrorColor(event) { //допилить
             event.target.classList.add('clickPaginationFalse')
         },
 
         // setColor(event) {
-        //     debugger
+        //     
         //     if (event.target.classList.contains('clickPaginationTrue')) {
     
         //     } else event.target.classList.add('clickPaginationTrue');
@@ -96,10 +106,8 @@ export default {
         },
 
         getPLL() {
-            return this.list 
+            return this.list
         },
-
-
     }
 }
 </script>

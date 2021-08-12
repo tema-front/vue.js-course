@@ -1,89 +1,60 @@
 <template>
   <div id="app" class="container">
     <header>
-      <h1 class="header">My presonal cost</h1>
+      <h1 class="header"  @click="menu">My presonal cost</h1>
     </header>
+    <div class="menu">
+      <router-link to="/dashboard" class="menu_link" >Dashboard</router-link> 
+      <router-link to="/about" class="menu_link">About</router-link> 
+      <router-link to="/notfound" class="menu_link">Not Found</router-link>
+      <!-- <router-link to="/dashboard/add/payment"></router-link> -->
+    </div>
     <main>
-      <br>
-      <AddPayment @addNewPayment="addData"/>
-      <PaymentsDisplay :list="paymentsList"/>
-      <br>
-      <div class="totalCost">total: {{ getFPV }}</div>
+      <router-view></router-view>
     </main>
   </div>
-
 </template>
 
 <script>
-import PaymentsDisplay from './components/PaymentsDisplay.vue'
-import AddPayment from './components/AddPayment.vue'
-
-import { mapMutations, mapGetters, mapActions } from 'vuex'
-
-export default {
-
-  name: 'App',
-  components: {
-    PaymentsDisplay,
-    AddPayment
-  },
-
-  methods: {
-
-    ...mapMutations([
-      'addDataToPaymentsListMT'
-    ]),
-
-    addData(data) {
-      this.addDataToPaymentsListMT(data)
-    },
-
-  },  
-
-  computed: {
-
-    ...mapGetters([
-      'getPaymentPaginationGT',
-      'getFullPaymentValueGT'
-    ]),
-
-    ...mapActions([
-      'loadDataAC',
-    ]),
-
-    getFPV(){
-      return this.getFullPaymentValueGT
-    },
-
-    paymentsList() {
-      return this.getPaymentPaginationGT
+  export default {
+    name: "App",
+    methods: {
+      menu() {
+        this.$router.push({
+          name: 'menu'
+        })
+      }
     }
-
-  },
-
-  created() {
-    this.loadDataAC;
   }
-
-}
 </script>
 
 <style scoped>
-  .container {
-    width: 1200px;
-    margin: 0 auto;
-  }
+.container {
+  width: 1200px;
+  margin: 0 auto;
+}
 
-  .header {
-    text-align: center;
-    text-transform: uppercase;
-    font-family: sans-serif;
-  }
+.menu {
+  text-align: center;
+}
 
-  .totalCost {
-    text-align: left;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: bold;
-  }
+.menu_link {
+  font-size: 20px;
+  margin: 10px;
+  font-family: sans-serif;
+  text-decoration: none;
+  color: black;
+}
+
+.menu_link:active {
+  color: gray;
+}
+
+.header {
+  text-align: center;
+  text-transform: uppercase;
+  font-family: sans-serif;
+}
+
+
 </style>

@@ -5,25 +5,34 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        runDashboard: 0,
         paymentsList: [],
         paymentPagination: [],
         categoryList: [],
         currentNumberButton: 1,
-        quntityButtons: 3
+        quntityButtons: 0
     },
 
     mutations: {
 
         setDataPaymentsListMT(state, payload) {
+            if (state.runDashboard == 1) return
+            debugger
+            state.runDashboard = 1;
             for (let page in payload) {
                 for (let i = 0; i < payload[page].length; i++)
-                state.paymentsList.push(payload[page][i])
+                state.paymentsList.unshift(payload[page][i])
             }
+            state.quntityButtons = Math.ceil(state.paymentsList.length / 3);
+            state.currentNumberButton = state.quntityButtons
         },
 
         addDataToPaymentsListMT(state, payload) {
-            state.paymentsList.push(payload)
-            state.quntityButtons = Math.ceil(state.paymentsList.length / 3)
+
+            Vue.set(state.paymentsList, state.paymentsList.length, payload)
+            // state.paymentsList.push(payload)
+            state.quntityButtons = Math.ceil(state.paymentsList.length / 3);
+            state.currentNumberButton = state.quntityButtons
         },
 
         setCategoriesMT(state, payload) {
@@ -31,18 +40,22 @@ export default new Vuex.Store({
         },
 
         setPaginationMT(state, payload) {
+            state.quntityButtons = Math.ceil(state.paymentsList.length / 3);
+            // state.currentNumberButton = state.quntityButtons
+            // this.$route.params.page = payload;
             state.currentNumberButton = payload;
             state.paymentPagination = [];
             for (let i = (payload - 1) * 3; i < payload * 3; i++) {
-                state.paymentPagination.push(state.paymentsList[i])
+                // state.paymentPagination.push(state.paymentsList[i])
+                Vue.set(state.paymentPagination, state.paymentPagination.length, state.paymentsList[i])
             }
-        },
+        }
 
     },
 
     actions: {
 
-        loadDataAC({commit}) {
+        loadDataAC({commit}, state) {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     resolve(
@@ -67,7 +80,9 @@ export default new Vuex.Store({
                 }, 1000)
             }).then(res => {
                 commit('setDataPaymentsListMT', res);
-                commit('setPaginationMT', 1);
+                if (state.$route.params.page) commit('setPaginationMT', state.$route.params.page)
+                else commit('setPaginationMT', this.getters.getQuntityButtonsGT ) 
+                
             })
         },
         
@@ -82,13 +97,12 @@ export default new Vuex.Store({
         }
 
     },
-
+// d2 c2ac a1a8
     getters: {
-        getPaymentPaginationGT: state => [...state.paymentPagination],
+        getPaymentsPaginationGT: state => [...state.paymentPagination],
         getCategoryListGT: state => state.categoryList,
         getCurrentNumberButtonGT: state => state.currentNumberButton,
         getQuntityButtonsGT: state => state.quntityButtons,
-        getPaymentListGT: state => state.paymentsList, // походу нигде не юзаю, проверю и удалю
         getFullPaymentValueGT: state => {
             return state.paymentsList.reduce((result, current)=> result + current.value, 0)
         }

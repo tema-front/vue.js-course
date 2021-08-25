@@ -1,44 +1,41 @@
 <template>
-    <div>
-
-        <button class="btnAdd btnPlus" @click="modalWindow = !modalWindow">add new cost</button>
-  <div class="modalBlock" v-if="modalWindow">
-
-    <div class="closeBlock">
-      <button class="closeModalWindow btnAdd" @click="modalWindow = !modalWindow">Close</button>
-    </div>
-    <input type="text" v-model.trim="date" placeholder="Date" class="enterDatas"/>
-    <input type="text" v-model.trim="category" placeholder="Category" class="enterDatas" list="categoryList"/>
-    <datalist id="categoryList">
-      <select v-model="selected">
-        <option v-for="(option, idx) in this.getCategoryListGT" :key="idx" :value="option">
-          {{ option }}
-        </option>
-      </select>
-    </datalist>
-      <input type="number" v-model.number="value" placeholder="Value" class="enterDatas"/>
-      <button class="btnAdd btnAddNewCost" @click="addPaymentList()">add</button>
+    <div class="modalBlock">
+        <div class="closeBlock">
+            <button class="closeModalWindow btnAdd" @click="modalWindowClose">Close</button>
+        </div>
+        <input type="text" v-model.trim="date" placeholder="Date" class="enterDatas"/>
+        <input type="text" v-model.trim="category" placeholder="Category" class="enterDatas" list="categoryList"/>
+        <datalist id="categoryList">
+            <select v-model="selected">
+                <option v-for="(option, idx) in this.getCategoryListGT" :key="idx" :value="option">
+                    {{ option }}
+                </option>
+            </select>
+        </datalist>
+        <input type="number" v-model.number="value" placeholder="Value" class="enterDatas"/>
+        <button class="btnAdd btnAddNewCost" @click="addPaymentList()">add</button>
     <div>
         <p v-if="enterData" class="txtEnterData">Please, enter data</p>
     </div>
+    <Dashboard v-if="false" @addPaymentListAP="addPaymentList" />
   </div>
-    </div>
-
-
-
 </template>
 
 <script>
 import { mapMutations, mapGetters, mapActions } from "vuex";
+import Dashboard from '../views/Dashboard.vue'
 
 export default {
   name: "AddPayment",
+  components: {
+    Dashboard
+  },
+
   data: () => ({
     date: "",
     category: "",
     value: null,
     button: "",
-    modalWindow: false,
     selected: "",
     enterData: false,
   }),
@@ -47,8 +44,8 @@ export default {
     ...mapMutations(["setPaginationMT"]),
 
     addPaymentList() {
+    
         const { category, value } = this;
-        debugger
         if (this.category && this.value ) this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
         const data = {
             date: this.date || this.getCurrentDate,
@@ -65,8 +62,8 @@ export default {
             this.enterData = false;
         }
 
-        this.$emit("addNewPayment", data); // вызов события addNewPayment у подписчика
-        this.$emit("updatePaymentPagination", data); // вызов события updatePaymentPagination, которое обновляет массив для текущей страниц при клике add
+        this.$emit("addNewPaymentMW", data); // вызов события addNewPayment у подписчика
+        this.$emit("updatePaymentPaginationMW"); // вызов события updatePaymentPagination, которое обновляет массив для текущей страниц при клике add
     },
 
 
@@ -75,7 +72,10 @@ export default {
     //   else this.$router.push({path: '/dashboard/add/payment'})
     // }
 
-
+    modalWindowClose() {
+      debugger
+      this.$emit('modalWindowCloseDashboard');
+    }
     
   },
 
@@ -103,17 +103,17 @@ export default {
 
   },
 
-mounted() {
+  mounted() {
 
-
-
-    if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.modalWindow = true
-      // блять заебался. хардкод сука!
     debugger
+
+    if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.$emit('modalVisibilityGetTrue')
+
+
     
     const categoryList = ["Food", "Car", "Vacation", "Helth", "Pet", "Furniture"];
     let categoryListLowCase = [];
-      
+        
     categoryList.forEach((item) => {
       categoryListLowCase.push(item.toLowerCase());
     });
@@ -126,7 +126,7 @@ mounted() {
     if (this.$route.query?.value ?? null) this.value = Number(this.$route.query.value);
 
     if (this.category && this.value) this.addPaymentList();
-    },
+  },
 };
 </script>
 
@@ -142,16 +142,14 @@ mounted() {
   border-radius: 3px;
   margin-bottom: 20px;
 }
-
 .btnAddNewCost:active {
   background-color: aquamarine;
 }
-
 .btnPlus:after {
   content: "\00a0 \00a0 +";
 }
-
 .modalBlock {
+  background-color: white;
   width: 350px;
   height: 250px;
   border: 2px solid rgb(109, 109, 109);
@@ -160,29 +158,27 @@ mounted() {
   padding: 20px;
   padding-top: 32px;
   margin: 0 0 20px;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
-
 .enterDatas {
   height: 30px;
   margin-bottom: 15px;
   padding: 10px;
   font-size: 16px;
 }
-
 .modalBlock > button {
   width: 100px;
   margin: 0 auto;
 }
-
 .pleaseEnterData {
   background-color: rgb(112, 112, 112);
 }
-
 .pleaseEnterData:active {
   background-color: rgb(197, 0, 0);
 }
-
 .txtEnterData {
   text-align: center;
   font-family: sans-serif;
@@ -190,27 +186,22 @@ mounted() {
   color: rgb(197, 0, 0);
   font-size: 16px;
 }
-
 .closeBlock {
   position: absolute;
   right: 21px;
   top: 5px;
 }
-
 .closeModalWindow {
   padding: 2px;
   text-transform: lowercase;
   font-size: 16px;
   background-color: #3435;
 }
-
 .btnAdd:hover {
   background-color: rgb(0, 71, 48);
 }
-
 .closeModalWindow:hover {
   background-color: rgba(10, 10, 10, 0.333);
 }
-
 
 </style>

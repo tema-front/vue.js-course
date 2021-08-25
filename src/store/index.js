@@ -17,7 +17,7 @@ export default new Vuex.Store({
 
         setDataPaymentsListMT(state, payload) {
             if (state.runDashboard == 1) return
-            debugger
+
             state.runDashboard = 1;
             for (let page in payload) {
                 for (let i = 0; i < payload[page].length; i++)
@@ -97,7 +97,7 @@ export default new Vuex.Store({
         }
 
     },
-// d2 c2ac a1a8
+
     getters: {
         getPaymentsPaginationGT: state => [...state.paymentPagination],
         getCategoryListGT: state => state.categoryList,

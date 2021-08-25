@@ -5,17 +5,28 @@
 
     <main>
       <br/>
-        <AddPayment @addNewPayment="addData" @updatePaymentPagination="updatePaginationList" />
+      <button class="btnAdd btnPlus" @click="showAndRemoveModalWindow">add new cost</button>
+        <!-- <AddPayment @addNewPayment="addData" @updatePaymentPagination="updatePaginationList" /> -->
+        <ModalWindow 
+          @modalWindowOpen="modalWindowVisibilityGetTrue"
+          @updatePaymentPaginationDB="updatePaginationList"
+          @addNewPaymentDB="addData"
+          @modalWindowClose="modalWindowVisibility = false"
+          v-if="modalWindowVisibility"/>
         <PaymentsDisplay :list="paymentsList" />
       <br/>
       <div class="totalCost">total: {{ getFPV }}</div>  
     </main>
+    <!-- <AddPayment v-if="false" @modalWindowCloseDashboard="foo" /> -->
   </div>
 </template>
 
 <script>
 import PaymentsDisplay from "../components/PaymentsDisplay.vue";
-import AddPayment from "../components/AddPayment.vue";
+// import AddPayment from "../components/AddPayment.vue";
+import ModalWindow from "../components/ModalWindow.vue";
+
+
 // import ModalWindowPayments from "../components/ModalWindowPayments.vue";
 
 
@@ -25,17 +36,24 @@ export default {
   name: "Dashboard",
   components: {
     PaymentsDisplay,
-    AddPayment,
-    // ModalWindowPayments
+    // AddPayment,
+    ModalWindow
     // Dashboard,
     // About,
     // NotFound
   },
 
+  // props: {
+  //   modalWindowVisibility: {
+  //     type: Boolean,
+  //     default: false
+  //   }
+  // },
+
   data: () => ({
     page: "",
     firstStartDashboard: true,
-    modalWindowPayment: false
+    modalWindowVisibility: false
   }),
 
   methods: {
@@ -46,9 +64,24 @@ export default {
     },
 
     updatePaginationList() {
-      debugger
       this.setPaginationMT(this.getCurrentNumberButtonGT);
     },
+
+    modalWindowVisibilityGetTrue() {
+      this.modalWindowVisibility = true;
+    },
+
+    showAndRemoveModalWindow() {
+      this.modalWindowVisibility = !this.modalWindowVisibility;
+
+      if (this.modalWindowVisibility) this.$router.push({path: '/dashboard/add/payment'})
+      else this.$router.push({path: '/dashboard/'})
+
+    },
+
+    foo() {
+      alert("i`m working")
+    }
 
     // onClose() {
     //   debugger
@@ -93,6 +126,15 @@ export default {
   },
 
   mounted() {
+
+    if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.modalWindowVisibility = true;
+    // else this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
+
+    this.$emit('addPaymentListAP')
+    // this.addPaymentList();
+
+
+
 
   // if (this.$route.path.slice(1, 22) == "dashboard/add/payment") {
   //   this.$emit("getPaymentAndRouter")

@@ -1,35 +1,53 @@
 <template>
-    <div class="modalBlock">
-        <div class="closeBlock">
-            <button class="closeModalWindow btnAdd" @click="modalWindowClose">Close</button>
-        </div>
-        <input type="text" v-model.trim="date" placeholder="Date" class="enterDatas"/>
-        <input type="text" v-model.trim="category" placeholder="Category" class="enterDatas" list="categoryList"/>
-        <datalist id="categoryList">
-            <select v-model="selected">
-                <option v-for="(option, idx) in this.getCategoryListGT" :key="idx" :value="option">
-                    {{ option }}
-                </option>
-            </select>
-        </datalist>
-        <input type="number" v-model.number="value" placeholder="Value" class="enterDatas"/>
-        <button class="btnAdd btnAddNewCost" @click="addPaymentList()">add</button>
+  <div class="ownerModalBlock" >
+    <input type="text" v-model.trim="date" placeholder="Date | Default: current date" class="enterDatas bgcYellow hoverYellow" />
     <div>
-        <p v-if="enterData" class="txtEnterData">Please, enter data</p>
+      <input type="text" v-model.trim="category" placeholder="Category"  class="enterDatas bgcYellow hoverYellow" list="categoryList"/>
+      <button class="chooseCategory btnYellow" @click="modalCategory = !modalCategory">▼</button>
+    </div>
+    <div class="modalCategory bdYellow bgcYellow" v-if="modalCategory">
+      <p v-for="(item, idx) in this.getCategoryListGT" :key="idx" class="hoverYellow txtYellow modalCategoryPaymentList" @click="setCategory($event)">
+        {{ item }}
+      </p>
+    </div>
+    <!-- <datalist id="categoryList">
+      <select v-model="selected" class="selectCategory">
+        <option v-for="(option, idx) in this.getCategoryListGT" :key="idx" :value="option">
+            {{ option }}
+        </option>
+      </select>
+    </datalist> -->
+    <input type="number" v-model.number="value" placeholder="Value" class="enterDatas bgcYellow hoverYellow"/>
+    <div>
+      <transition name="enterData">
+        <p v-if="enterDataFalse" class="txtEnterData">Please, enter data</p>
+        <p v-if="enterDataComplete" class="txtEnterData complete">Done</p>
+        <p v-if="errorDate" class="txtEnterData">Not correctly date</p>
+      </transition>
     </div>
     <Dashboard v-if="false" @addPaymentListAP="addPaymentList" />
+    <ModalWindow v-if="false" @addPaymentAP="addPaymentList" />
+    <div>
+      <button class="btnAdd btnPlus btnYellow btnCenter" @click="addPaymentList">add</button>
+    </div>
+
   </div>
 </template>
 
 <script>
 import { mapMutations, mapGetters, mapActions } from "vuex";
+
 import Dashboard from '../views/Dashboard.vue'
+
+
 
 export default {
   name: "AddPayment",
   components: {
-    Dashboard
+    Dashboard,
+    ModalWindow: () => import(/* webpackChunkName: 'ModalWindow' */ './ModalWindow.vue')
   },
+
 
   data: () => ({
     date: "",
@@ -37,98 +55,145 @@ export default {
     value: null,
     button: "",
     selected: "",
-    enterData: false,
+    enterDataFalse: false,
+    enterDataComplete: false,
+    today: undefined,
+    errorDate: false,
+    modalCategory: false
   }),
 
   methods: {
-    ...mapMutations(["setPaginationMT"]),
+    ...mapMutations(["setPaginationMT", 'addDataToPaymentsListMT', 'setPaginationMT']),
 
     addPaymentList() {
-    
-        const { category, value } = this;
-        if (this.category && this.value ) this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
-        const data = {
-            date: this.date || this.getCurrentDate,
-            category,
-            value,
-        };
+      debugger
+      if (this.category && this.value ) this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
+      if (this.date.length == 0) this.date = this.getCurrentDate()
+      // else this.checkDate(this.date.split('.'))
+      let arrDate = this.date.split('.')
+      // if (!this.checkDate(this.date.split('.'))) return
+      if (arrDate.length == 3 && (arrDate[0] <= 31 && arrDate[0] >= 1 && arrDate[1] <= 12 && arrDate[1] >= 1 && arrDate[2].length == 4)) {
+        this.getCorrectlyDate(this.date)
+        this.errorDate = false;
+      } else {
+        this.errorDate = true;
+        return;
+      }
+      
+      const data = {
+        date: this.date,
+        category: this.category,
+        value: this.value
+      };
+      
+      if (!this.category || !this.value) {
+        this.enterDataFalse = true;
+        return;
+      } else {
+        this.enterDataFalse = false;
+        this.enterDataComplete = true
+        setTimeout(() => {
+          this.enterDataComplete = false
+        }, 500)
+      }
+      this.addDataToPaymentsListMT(data);
+      this.setPaginationMT(this.getCurrentNumberButtonGT);
+    },  
 
-        if (!category || !value) {
-            // document.querySelector(".btnAddNewCost").classList.add("pleaseEnterData");
-            this.enterData = true;
-            return;
-        } else {
-            // document.querySelector(".btnAddNewCost").classList.add("pleaseEnterData");
-            this.enterData = false;
-        }
-
-        this.$emit("addNewPaymentMW", data); // вызов события addNewPayment у подписчика
-        this.$emit("updatePaymentPaginationMW"); // вызов события updatePaymentPagination, которое обновляет массив для текущей страниц при клике add
+    closeModalCategory() {
+      this.modalCategory = false
     },
 
+    // checkDate(arrDate) {
+    //   if (arrDate.length == 3 && (arrDate[0] <= 31 && arrDate[0] >= 1 && arrDate[1] <= 12 && arrDate[1] >= 1 && arrDate[2].length == 4)) {
+    //     this.getCorrectlyDate(this.date)
+    //     this.errorDate = false;
+    //     return true;
+    //   } else {
+    //     this.errorDate = true;
+    //     return false;
+    //   }
+    // },
+
+    getCorrectlyDate(date) {
+      let arrDate = date.split('.')
+      for (let i = 0; i < 2; i++) {
+        if (arrDate[i].length == 1) {
+          arrDate[i] = (String(arrDate[i]) + "0").split("").reverse().join("");
+        }
+      }
+      this.date = arrDate.join('.')
+    },
+
+    // listenerDate(date) {
+    //   debugger
+    //   let arrDate = date.split('.');
+    //   if (arrDate.length == 3 && (arrDate[0] <= 31 && arrDate[0] >= 1 && arrDate[1] <= 12 && arrDate[1] >= 1 && arrDate[2].length == 4)) {
+    //     this.errorDate = false
+    //   } else this.errorDate = true
+    // },
+
+    getCurrentDate() {
+      this.today = new Date();
+      let day = this.today.getDate();
+      let month = this.today.getMonth() + 1;
+      let year = this.today.getFullYear();
+      return `${day}.${month}.${year}`;
+    },
+
+    setCategory(set) {
+      this.modalCategory = false
+      this.category = set.target.innerText
+    },
 
     // addPathRoute() {
     //   if (this.modalWindow) this.$router.push({path: '/dashboard'})
     //   else this.$router.push({path: '/dashboard/add/payment'})
     // }
 
-    modalWindowClose() {
-      debugger
-      this.$emit('modalWindowCloseDashboard');
-    }
     
   },
 
   computed: {
-    ...mapGetters(["getCategoryListGT"]),
-
+    ...mapGetters(['getCategoryListGT', 'getCurrentNumberButtonGT']),
     ...mapActions(["loadCategoriesAC"]),
 
-    getCurrentDate() {
-      const today = new Date();
-      let day = today.getDate();
-      // делаю из "n" в "0n"
-      if (String(day).length == 1) {
-        day = (String(day) + "0").split("").reverse().join("");
-      }
-      let month = today.getMonth() + 1;
-      // делаю из "n" в "0n" 2.7.2021 => 02.07.2021
-      if (String(month).length == 1) {
-        month = (String(month) + "0")
-      }
-      const year = today.getFullYear();
-
-      return `${day}.${month}.${year}`;
-    },
-
+    // test() {
+    //   debugger
+    //   let testValue = this.date
+    //   this.listenerDate(testValue)
+    //   return this.testValue
+    // }
   },
 
   mounted() {
 
-    debugger
-
     if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.$emit('modalVisibilityGetTrue')
-
-
-    
     const categoryList = ["Food", "Car", "Vacation", "Helth", "Pet", "Furniture"];
     let categoryListLowCase = [];
-        
+
     categoryList.forEach((item) => {
       categoryListLowCase.push(item.toLowerCase());
     });
 
-
     if (categoryListLowCase.includes((this.$route.params?.category ?? "no").toLowerCase())) {
       this.category = this.$route.params.category[0].toUpperCase() + this.$route.params.category.slice(1);
     }
-
     if (this.$route.query?.value ?? null) this.value = Number(this.$route.query.value);
-
     if (this.category && this.value) this.addPaymentList();
   },
 };
 </script>
+
+<style>
+  .enterData-enter-active, .enterData-leave-active {
+    transition: opacity .5s;
+  }
+
+  .enterData-enter, .enterData-leave-to {
+    opacity: 0;
+  }
+</style>
 
 <style scoped>
 .btnAdd {
@@ -136,56 +201,45 @@ export default {
   text-transform: uppercase;
   font-family: sans-serif;
   padding: 7px;
-  background-color: rgb(0, 161, 153);
-  border: 0;
-  color: white;
   border-radius: 3px;
   margin-bottom: 20px;
 }
-.btnAddNewCost:active {
-  background-color: aquamarine;
-}
+
 .btnPlus:after {
   content: "\00a0 \00a0 +";
 }
-.modalBlock {
-  background-color: white;
-  width: 350px;
-  height: 250px;
-  border: 2px solid rgb(109, 109, 109);
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  padding-top: 32px;
-  margin: 0 0 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+
 .enterDatas {
-  height: 30px;
-  margin-bottom: 15px;
+  height: 50px;
+  margin-bottom: 35px;
   padding: 10px;
   font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  color: rgb(126, 113, 56); 
+  border: 3px solid rgb(126, 113, 56);
+  outline: none;
+  font-weight: bold;
 }
-.modalBlock > button {
-  width: 100px;
-  margin: 0 auto;
-}
-.pleaseEnterData {
-  background-color: rgb(112, 112, 112);
-}
-.pleaseEnterData:active {
-  background-color: rgb(197, 0, 0);
-}
+
+.enterDatas::-webkit-input-placeholder { color: rgb(197, 181, 107); }
+
 .txtEnterData {
   text-align: center;
   font-family: sans-serif;
   font-weight: bold;
-  color: rgb(197, 0, 0);
+  color: rgb(211, 83, 83);
   font-size: 16px;
+  position: absolute;
+  left: 50%;
+  top: 80.5%;
+  transform: translate(-50%, 0%);
 }
+
+.complete {
+  color: green;
+}
+
 .closeBlock {
   position: absolute;
   right: 21px;
@@ -197,11 +251,35 @@ export default {
   font-size: 16px;
   background-color: #3435;
 }
-.btnAdd:hover {
-  background-color: rgb(0, 71, 48);
+
+.selectCategory {
+    background-color: rgb(236, 212, 105);
 }
-.closeModalWindow:hover {
-  background-color: rgba(10, 10, 10, 0.333);
+
+.enterDatas:nth-child(2) {
+
+  position: relative;
+}
+
+.chooseCategory {
+  position: absolute; 
+  left: 84%;
+  top: 43%;
+  height: 29.2px;
+}
+
+.modalCategory {
+  position: absolute;
+  top: 49.9%;
+  left: 59.8%;
+  width: 100px;
+  color: rgb(126, 113, 56); 
+  padding: 10px;
+
+}
+
+.modalCategoryPaymentList {
+  margin: 3px;
 }
 
 </style>

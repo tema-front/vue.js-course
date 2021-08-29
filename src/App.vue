@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container">
+  <div id="app" class="container" >
     <header>
       <h1 class="header"  @click="menu">My presonal cost</h1>
     </header>
@@ -12,21 +12,110 @@
     <main>
       <router-view></router-view>
     </main>
+    <transition name="fade">
+      <ModalWindow v-if="modalSettings.name" :settings="modalSettings" />
+    </transition>
+  
   </div>
 </template>
 
 <script>
+  import ModalWindow from './components/ModalWindow.vue'
+
   export default {
     name: "App",
+    components: { ModalWindow },
+
+    data: () => ({
+      modalShow: false,
+      modalSettings: {},
+    }),
+
+
+
     methods: {
       menu() {
         this.$router.push({
           name: 'menu'
         })
-      }
+      },
+
+      onShow(settings) {
+        debugger
+        this.modalSettings = settings
+      },
+
+      onHide() {
+        this.modalSettings = {}
+      },
+
+    },
+
+    mounted() {
+      this.$modal.EventBus.$on('show', this.onShow)
+      this.$modal.EventBus.$on('hide', this.onHide)
+    },
+
+    beforeDestroy() {
+      this.$modal.EventBus.$off('show', this.onShow)
+      this.$modal.EventBus.$off('hide', this.onHide)
     }
   }
 </script>
+
+<style>
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+</style>
+
+<style>
+  .btnYellow {
+    background-color: rgb(236, 212, 105);
+    border: 3px solid rgb(126, 113, 56);
+    color: rgb(126, 113, 56);
+  }
+
+  .btnYellow:hover {
+    background-color: rgb(221, 188, 41);
+  }
+
+  .btnYellow:active {
+    background-color: rgb(236, 212, 105);
+  }
+
+  .bgcYellow {
+    background-color: rgb(236, 212, 105);
+  }
+
+  .bdYellow {
+    border: 3px solid rgb(126, 113, 56);
+  }
+
+  .hoverYellow:hover {
+    background-color: rgb(221, 188, 41);
+  }
+
+  .colorYellow {
+    color: rgb(126, 113, 56);
+  }
+
+  .btnCenter {
+    margin: 0 auto
+  }
+
+  .txtYellow {
+    font-size: 16px;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: rgb(126, 113, 56);
+  }
+
+</style>
 
 <style scoped>
 .container {
@@ -57,4 +146,8 @@
 }
 
 
+
+
 </style>
+
+

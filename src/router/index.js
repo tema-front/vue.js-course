@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Dashboard from '../views/Dashboard'
 import About from '../views/About'
-import NotFound from '../views/NotFound'
+// import NotFound from '../views/NotFound'
 
 // import AddPayment from '../components/AddPayment'
 
@@ -14,32 +14,40 @@ const router = new Router({
     routes: [
         {
             path: '/dashboard',
-            component: Dashboard,
-            name: 'dashboard'
+            // component: Dashboard,
+
+            component: () => import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard.vue'),
+            name: 'Dashboard'
         },
 
         {
             path: '/dashboard/:page',
             component: Dashboard,
-            name: 'dashboard'
+
+            // component: () => import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard.vue'),
+            name: 'Dashboard'
         },
 
         {
+
             path: '/dashboard/add/payment',
-            component: Dashboard,
-            name: 'dashboard'
+            // component: Dashboard,
+
+            component: () => import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard.vue'),
+            name: 'Dashboard'
         },
 
         {
             path: '/dashboard/add/payment/:category',
-            component: Dashboard,
-            name: 'dashboard'
+            // component: Dashboard,
+            component: () => import(/* webpackChunkName: 'Dashboard' */ '../views/Dashboard.vue'),
+            name: 'Dashboard'
         },
 
         {
             path: '/dashboard/add/payment/:category/:value',
-            // component: AddPayment,
-            name: 'dashboard'
+            component: Dashboard,
+            name: 'Dashboard'
         },
 
         {
@@ -60,7 +68,7 @@ const router = new Router({
 
         {
             path: '/about*',
-            component: About,
+            component: () => import(/* webpackChunkName: 'About' */ '../views/About.vue'), 
             redirect: '/about'
         },
 
@@ -72,8 +80,8 @@ const router = new Router({
 
         {
             path: '/404',
+            component: () => import(/* webpackChunkName: 'NotFound' */ '../views/NotFound.vue'), 
             name: 'notFound',
-            component: NotFound 
         },
 
         {
@@ -101,7 +109,7 @@ export default router;
 const getTitle = routname => {
     return {
         'menu': 'Menu',
-        'dashboard':'Take a look on your payments and add more!',
+        'Dashboard':'Take a look on your payments and add more!',
         'about': 'Anything about our awesome application!',
         'notFound': 'Oops! Seems like we lost this page :( '
     }[routname]

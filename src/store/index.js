@@ -28,7 +28,6 @@ export default new Vuex.Store({
         },
 
         addDataToPaymentsListMT(state, payload) {
-
             Vue.set(state.paymentsList, state.paymentsList.length, payload)
             // state.paymentsList.push(payload)
             state.quntityButtons = Math.ceil(state.paymentsList.length / 3);
@@ -40,6 +39,7 @@ export default new Vuex.Store({
         },
 
         setPaginationMT(state, payload) {
+
             state.quntityButtons = Math.ceil(state.paymentsList.length / 3);
             // state.currentNumberButton = state.quntityButtons
             // this.$route.params.page = payload;

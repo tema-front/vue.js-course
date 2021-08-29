@@ -1,3 +1,4 @@
+
 <template>
   <div class="container">
     <!-- <button class="btnAdd btnPlus" @click="modalWindowPayment = !modalWindowPayment" >add new cost</button> -->
@@ -5,19 +6,15 @@
 
     <main>
       <br/>
-      <button class="btnAdd btnPlus" @click="showAndRemoveModalWindow">add new cost</button>
+      <!-- <button class="btnAdd btnPlus" @click="showAndRemoveModalWindow">add new cost</button> -->
+      <button class="btnAdd btnPlus btnYellow" @click="showPaymentsForm">add new cost</button>
+
         <!-- <AddPayment @addNewPayment="addData" @updatePaymentPagination="updatePaginationList" /> -->
-        <ModalWindow 
-          @modalWindowOpen="modalWindowVisibilityGetTrue"
-          @updatePaymentPaginationDB="updatePaginationList"
-          @addNewPaymentDB="addData"
-          @modalWindowClose="modalWindowVisibility = false"
-          v-if="modalWindowVisibility"/>
+        <ModalWindow :settings="modalSettings" v-if="false"/>
         <PaymentsDisplay :list="paymentsList" />
       <br/>
       <div class="totalCost">total: {{ getFPV }}</div>  
     </main>
-    <!-- <AddPayment v-if="false" @modalWindowCloseDashboard="foo" /> -->
   </div>
 </template>
 
@@ -37,23 +34,22 @@ export default {
   components: {
     PaymentsDisplay,
     // AddPayment,
-    ModalWindow
+    ModalWindow,
     // Dashboard,
     // About,
     // NotFound
-  },
+  }, 
 
-  // props: {
-  //   modalWindowVisibility: {
-  //     type: Boolean,
-  //     default: false
-  //   }
-  // },
+
 
   data: () => ({
     page: "",
     firstStartDashboard: true,
-    modalWindowVisibility: false
+    modalWindowVisibility: false,
+    modalSettings: {
+      header: '',
+      content: ''
+    }
   }),
 
   methods: {
@@ -67,20 +63,17 @@ export default {
       this.setPaginationMT(this.getCurrentNumberButtonGT);
     },
 
-    modalWindowVisibilityGetTrue() {
-      this.modalWindowVisibility = true;
-    },
+    // showAndRemoveModalWindow() {
+    //   this.modalWindowVisibility = !this.modalWindowVisibility;
 
-    showAndRemoveModalWindow() {
-      this.modalWindowVisibility = !this.modalWindowVisibility;
+    //   if (this.modalWindowVisibility) this.$router.push({path: '/dashboard/add/payment'})
+    //   else this.$router.push({path: '/dashboard/'})
 
-      if (this.modalWindowVisibility) this.$router.push({path: '/dashboard/add/payment'})
-      else this.$router.push({path: '/dashboard/'})
+    // },
 
-    },
-
-    foo() {
-      alert("i`m working")
+    showPaymentsForm() {
+      this.$modal.show('AddPayment', { header: "add new cost" });
+      if (this.$route.path != '/dashboard/add/payment') this.$router.push({path: '/dashboard/add/payment'})
     }
 
     // onClose() {
@@ -126,10 +119,10 @@ export default {
   },
 
   mounted() {
+    if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.$modal.show('AddPayment', { header: "add new cost" });
 
-    if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.modalWindowVisibility = true;
     // else this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
-
+debugger
     this.$emit('addPaymentListAP')
     // this.addPaymentList();
 
@@ -179,9 +172,6 @@ export default {
   text-transform: uppercase;
   font-family: sans-serif;
   padding: 7px;
-  background-color: rgb(0, 161, 153);
-  border: 0;
-  color: white;
   border-radius: 3px;
   margin-bottom: 20px;
 }
@@ -190,8 +180,5 @@ export default {
   content: "\00a0 \00a0 +";
 }
 
-.btnAdd:hover {
-  background-color: rgb(0, 71, 48);
-}
 </style>
 

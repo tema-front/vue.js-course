@@ -62,7 +62,6 @@
       },
 
       showSettingsPayment() {
-        debugger
         this.settingsPayment = "SettingsPayment"
         // this.numberButtonSettingsPayments = numberButton
         // console.log(123);

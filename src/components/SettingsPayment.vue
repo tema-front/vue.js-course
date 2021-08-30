@@ -1,11 +1,13 @@
 <template>
     <div class="buttonsSettingsPayment">
       <button class="btnSettingsPayment btnYellow txtYellow">Configure</button>
-      <button class="btnSettingsPayment btnYellow txtYellow">Remove</button>
+      <button class="btnSettingsPayment btnYellow txtYellow" @click="removePayment">Remove</button>
     </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+
 export default {
     name: 'SettingsPayment',
 
@@ -13,7 +15,39 @@ export default {
         settings: {
         type: Object
     },
+
+    numberBtn: {
+        type: Number
+    },
+
+    allPayments: {
+        type: Array
+    },
   },
+
+  methods: {
+    ...mapMutations([
+        'removePaymentMT'
+    ]),
+
+    removePayment() {
+    debugger
+    let itemRemove = this.getCNB
+    itemRemove = itemRemove * 3 - 2 + this.numberBtn - 2
+    this.removePaymentMT(Number(itemRemove))
+    console.log(this.allPayments, this.numberBtn, itemRemove);
+    }
+  },
+
+  computed: {
+    ...mapGetters([
+        'getCurrentNumberButtonGT'
+    ]),
+
+    getCNB() {
+        return this.getCurrentNumberButtonGT
+    }
+  }
 }
 </script>
 

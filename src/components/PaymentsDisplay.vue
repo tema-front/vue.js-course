@@ -1,42 +1,40 @@
 <template>
-        <div class="tableBlock">
-            <table class="tableCost">
-                <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Category</th>
-                    <th>Value</th>
-                </tr>     
+    <div class="tableBlock">
+        <table class="tableCost">
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Value</th>
+            </tr>     
 
-                <tr v-for="(array, idx) in getPLL" :key="idx" class="positionRelative" > 
+            <tr v-for="(array, idx) in getPLL" :key="idx" class="positionRelative" > 
 
-                    
-                    <th class="tableItem">{{ getCounter() + idx}}</th>
-                    <th class="tableItem" v-for="(item, idx) in array" :key="idx">{{ item }} </th>
-                    
-                    <div class="btnsSettingsPayments">
-                        <button class="btnPaymentSettingsVisibility btnYellow" v-if="list[idx]" :key='idx' @click="visibilitySettingsPayment(list[idx], idx + 1)">≡</button>
- 
-                    </div>
-                       <div v-if="settingsPaymentVisiblity" class="settingsPaymentBlock bgcYellow bdYellow">
-                            <component :is="SettingsPayment"/>
-                        </div>
-
-                </tr>
-
-            </table>
+                
+                <th class="tableItem">{{ getCounter() + idx}}</th>
+                <th class="tableItem" v-for="(item, idx) in array" :key="idx">{{ item }} </th>
 
 
-            <div class="paginationBlock">
+
+            </tr>
+                    <!-- <component :is="SettingsPayment" v-if="settingsPaymentVisiblity"/> -->
+                
+            <div class="btnsSettingsPayments">
+                <button class="btnPaymentSettingsVisibility btnYellow" v-for="(number, idx) in 3" :key="idx" @click="visibilitySettingsPayment(list, idx + 1, $event)">≡</button>
+                <div v-show="settingsPaymentVisiblity" class="settingsPaymentBlock bgcYellow bdYellow">
+                    <component :is="SettingsPayment" :numberBtn="currentBtnSettings" :allPayments="list"/>
+                </div>
+            </div>
+        </table>
+        <div class="paginationBlock">
                 <button class="paginationSymbol left" @click="addPagination($event, $route)">&#60;</button>
                     <div class="paginationNumberBlock">
                         <button class="paginationSymbol paginationNumber" @click="addPagination($event, $route)" v-for="(number, idx) in getQB" :key="idx">{{ number }}</button>
 
                     </div>
-                <button class="paginationSymbol right" @click="addPagination($event, $route)" @updatePaymentPagination="updatePagination()">&#62;</button>
-            </div>
+                <button class="paginationSymbol right" @click="addPagination($event, $route)" >&#62;</button>
         </div>
-
+    </div>
 </template>
 
 <script>
@@ -49,7 +47,7 @@ export default {
     data: () => ({
         settingsPaymentVisiblity: false,
         SettingsPayment: () => import (/* webpackChunkName: 'SettingsPayment' */  './SettingsPayment.vue'),
-        // idBlock: key
+        currentBtnSettings: 1
     }),
     // components: { SettingsPayment },
     props: {
@@ -84,23 +82,34 @@ export default {
             } else this.setErrorColor(event)
         },
 
-        updatePagination(event) {
-            
-            if (event) console.log(123);
-        },
-
         setErrorColor(event) { //допилить
             event.target.classList.add('clickPaginationFalse')
         },
 
-        visibilitySettingsPayment(payment, numberButton) {
-            debugger
+        visibilitySettingsPayment(payment, numberButton, event) {
+
+            this.currentBtnSettings = numberButton;
+            const settingsBlock = event.target.offsetParent.children[3];
+            settingsBlock.classList.remove('settingsBlockLevel1', 'settingsBlockLevel2', 'settingsBlockLevel3')
+
+            // if (this.settingsPaymentVisiblity && numberButton)
+
+            settingsBlock.classList.add(`settingsBlockLevel${numberButton}`)
+
+
+
+
+            console.log(settingsBlock);
             console.log(payment, this.getPL, numberButton, this.idBlock);
 
             // this.getPl.findIndex(i => i == payment)    
             this.settingsPaymentVisiblity = !this.settingsPaymentVisiblity
-            if (this.settingsPaymentVisiblity) this.$paymentSettings.show()
-            else this.$paymentSettings.hide()
+            if (this.settingsPaymentVisiblity) {
+                this.$paymentSettings.show()
+            } else this.$paymentSettings.hide()
+
+            
+
         },
 
         // setColor(event) {
@@ -136,7 +145,6 @@ export default {
         },
 
         getPL() {
-            debugger
             return this.getPaymentLists
         }
     }
@@ -146,10 +154,9 @@ export default {
 <style>
     .btnPaymentSettingsVisibility {
         font-weight: bold;
-        margin-left: -55px;
         height: 28px;
-        margin-top: -15px;
         font-size: 17.2px;
+        margin-bottom: 10px;
     }
 </style>
 
@@ -164,6 +171,7 @@ export default {
         border-collapse: separate;
         border-spacing: 70px 0;
         margin-left: -70px;
+        position: relative;
     }
 
     .tableItem {
@@ -213,8 +221,18 @@ export default {
         padding: 7px;
         width: 95px;
         position: absolute;
+        top: -22%;
+        left: 107.1%;
+    }
+
+    .settingsBlockLevel2 {
         top: 10%;
-        /* left: 46%; */
+        left: 107.1%;
+    }
+
+    .settingsBlockLevel3 {
+        top: 42%;
+        left: 107.1%;
     }
 
      /* tr:nth-child(3) > .btnsSettingsPayments > button{
@@ -224,6 +242,14 @@ export default {
 
     .positionRelative {
         position: relative;
+    }
+
+    .btnsSettingsPayments {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        left: 90%;
+        top: 24%;
     }
 
 </style>

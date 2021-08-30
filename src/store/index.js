@@ -49,6 +49,14 @@ export default new Vuex.Store({
                 // state.paymentPagination.push(state.paymentsList[i])
                 Vue.set(state.paymentPagination, state.paymentPagination.length, state.paymentsList[i])
             }
+        },
+
+        removePaymentMT(state, payload) {
+            debugger
+            console.log(state.paymentsList);
+            state.paymentsList.splice(payload, 1);
+            console.log(state.paymentsList);
+
         }
 
     },

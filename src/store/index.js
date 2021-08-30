@@ -103,8 +103,9 @@ export default new Vuex.Store({
         getCategoryListGT: state => state.categoryList,
         getCurrentNumberButtonGT: state => state.currentNumberButton,
         getQuntityButtonsGT: state => state.quntityButtons,
+        getPaymentLists: state => state.paymentsList,
         getFullPaymentValueGT: state => {
-            return state.paymentsList.reduce((result, current)=> result + current.value, 0)
+            return state.paymentsList.reduce((result, current) => result + current.value, 0)
         }
     }
 })

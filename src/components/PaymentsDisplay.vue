@@ -1,5 +1,4 @@
 <template>
-
         <div class="tableBlock">
             <table class="tableCost">
                 <tr>
@@ -9,16 +8,30 @@
                     <th>Value</th>
                 </tr>     
 
-                <tr v-for="(array, idx) in getPLL" :key="idx">
+                <tr v-for="(array, idx) in getPLL" :key="idx" class="positionRelative" > 
+
+                    
                     <th class="tableItem">{{ getCounter() + idx}}</th>
-                    <th class="tableItem" v-for="(item, idx) in array" :key="idx">{{ item }}</th>
+                    <th class="tableItem" v-for="(item, idx) in array" :key="idx">{{ item }} </th>
+                    
+                    <div class="btnsSettingsPayments">
+                        <button class="btnPaymentSettingsVisibility btnYellow" v-if="list[idx]" :key='idx' @click="visibilitySettingsPayment(list[idx], idx + 1)">≡</button>
+ 
+                    </div>
+                       <div v-if="settingsPaymentVisiblity" class="settingsPaymentBlock bgcYellow bdYellow">
+                            <component :is="SettingsPayment"/>
+                        </div>
+
                 </tr>
+
             </table>
+
 
             <div class="paginationBlock">
                 <button class="paginationSymbol left" @click="addPagination($event, $route)">&#60;</button>
                     <div class="paginationNumberBlock">
                         <button class="paginationSymbol paginationNumber" @click="addPagination($event, $route)" v-for="(number, idx) in getQB" :key="idx">{{ number }}</button>
+
                     </div>
                 <button class="paginationSymbol right" @click="addPagination($event, $route)" @updatePaymentPagination="updatePagination()">&#62;</button>
             </div>
@@ -27,19 +40,22 @@
 </template>
 
 <script>
-
+// import SettingsPayment from './SettingsPayment.vue'
 import { mapMutations, mapGetters } from 'vuex'
 
 export default {
 
     name: "PaymentsDisplay",
     data: () => ({
-
+        settingsPaymentVisiblity: false,
+        SettingsPayment: () => import (/* webpackChunkName: 'SettingsPayment' */  './SettingsPayment.vue'),
+        // idBlock: key
     }),
+    // components: { SettingsPayment },
     props: {
         list: {
             default: []
-        }
+        },
     },
 
     methods: {
@@ -49,7 +65,6 @@ export default {
 
         
         addPagination(event, route) {
-                
             
             if (event.target.innerText == "<" && this.getCNB != 1) {
                 route.params.page = String(this.getCNB - 1)
@@ -78,6 +93,16 @@ export default {
             event.target.classList.add('clickPaginationFalse')
         },
 
+        visibilitySettingsPayment(payment, numberButton) {
+            debugger
+            console.log(payment, this.getPL, numberButton, this.idBlock);
+
+            // this.getPl.findIndex(i => i == payment)    
+            this.settingsPaymentVisiblity = !this.settingsPaymentVisiblity
+            if (this.settingsPaymentVisiblity) this.$paymentSettings.show()
+            else this.$paymentSettings.hide()
+        },
+
         // setColor(event) {
         //     
         //     if (event.target.classList.contains('clickPaginationTrue')) {
@@ -95,6 +120,7 @@ export default {
         ...mapGetters([
             'getCurrentNumberButtonGT',
             'getQuntityButtonsGT',
+            'getPaymentLists'
         ]),
 
         getCNB() {
@@ -108,9 +134,24 @@ export default {
         getPLL() {
             return this.list
         },
+
+        getPL() {
+            debugger
+            return this.getPaymentLists
+        }
     }
 }
 </script>
+
+<style>
+    .btnPaymentSettingsVisibility {
+        font-weight: bold;
+        margin-left: -55px;
+        height: 28px;
+        margin-top: -15px;
+        font-size: 17.2px;
+    }
+</style>
 
 <style scoped>
     .tableBlock {
@@ -165,4 +206,24 @@ export default {
     .clickPaginationFalse:active {
         color: red;
     }
+
+    .settingsPaymentBlock {
+        display: flex;
+        flex-direction: column;
+        padding: 7px;
+        width: 95px;
+        position: absolute;
+        top: 10%;
+        /* left: 46%; */
+    }
+
+     /* tr:nth-child(3) > .btnsSettingsPayments > button{
+        position: relative;
+    } */
+
+
+    .positionRelative {
+        position: relative;
+    }
+
 </style>

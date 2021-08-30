@@ -8,7 +8,6 @@ export default {
             EventBus: new Vue(),
 
             show(name, settings) {
-                debugger
                 this.EventBus.$emit('show', {name, ...settings})
             },
             

@@ -88,7 +88,9 @@ const router = new Router({
             path: '*',
             // redirect: '/404'
             redirect: { name: 'notFound' }
-        }
+        },
+
+        
     ]
 });
 export default router;

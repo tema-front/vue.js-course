@@ -62,7 +62,7 @@ export default {
 
 .modalBlock {
   width: 350px;
-  min-height: 270px;
+  min-height: 360px;
   border: 2px solid rgb(109, 109, 109);
   display: flex;
   flex-direction: column;

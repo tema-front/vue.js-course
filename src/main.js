@@ -5,7 +5,11 @@ import store from './store'
 import router from './router'
 
 import modal from './plugins/modalWindow'
+import paymentSettings from './plugins/paymentSetting'
+
 Vue.use(modal)
+Vue.use(paymentSettings)
+
 
 
 Vue.config.productionTip = false

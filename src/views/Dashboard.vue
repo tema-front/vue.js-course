@@ -8,7 +8,7 @@
       <br/>
       <!-- <button class="btnAdd btnPlus" @click="showAndRemoveModalWindow">add new cost</button> -->
       <button class="btnAdd btnPlus btnYellow" @click="showPaymentsForm">add new cost</button>
-
+    <hr>
         <!-- <AddPayment @addNewPayment="addData" @updatePaymentPagination="updatePaginationList" /> -->
         <ModalWindow :settings="modalSettings" v-if="false"/>
         <PaymentsDisplay :list="paymentsList" />
@@ -21,7 +21,7 @@
 <script>
 import PaymentsDisplay from "../components/PaymentsDisplay.vue";
 // import AddPayment from "../components/AddPayment.vue";
-import ModalWindow from "../components/ModalWindow.vue";
+// import ModalWindow from "../components/ModalWindow.vue";
 
 
 // import ModalWindowPayments from "../components/ModalWindowPayments.vue";
@@ -33,8 +33,9 @@ export default {
   name: "Dashboard",
   components: {
     PaymentsDisplay,
+    ModalWindow: () => import(/* webpackChunkName: 'ModalWindow' */ '../components/ModalWindow.vue')
+
     // AddPayment,
-    ModalWindow,
     // Dashboard,
     // About,
     // NotFound
@@ -122,7 +123,6 @@ export default {
     if (this.$route.path.slice(1, 22) == "dashboard/add/payment") this.$modal.show('AddPayment', { header: "add new cost" });
 
     // else this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
-debugger
     this.$emit('addPaymentListAP')
     // this.addPaymentList();
 

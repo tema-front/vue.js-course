@@ -15,20 +15,33 @@
     <transition name="fade">
       <ModalWindow v-if="modalSettings.name" :settings="modalSettings" />
     </transition>
-  
+    <!-- <SettingsPayment v-if="false" :numberBtn="numberButtonSettingsPayments"/> -->
+    
+     <PaymentsDisplay  v-if="false"   :setting="settingsPayment"/>
   </div>
 </template>
 
 <script>
   import ModalWindow from './components/ModalWindow.vue'
+  // import SettingsPayment from './components/SettingsPayment.vue'
+  import PaymentsDisplay from './components/PaymentsDisplay.vue'
+
+
+
 
   export default {
     name: "App",
-    components: { ModalWindow },
+    components: { 
+      ModalWindow,
+      // SettingsPayment,
+      PaymentsDisplay
+    },
 
     data: () => ({
       modalShow: false,
       modalSettings: {},
+      settingsPayment: "",
+      // numberButtonSettingsPayments: 0
     }),
 
 
@@ -41,7 +54,6 @@
       },
 
       onShow(settings) {
-        debugger
         this.modalSettings = settings
       },
 
@@ -49,16 +61,33 @@
         this.modalSettings = {}
       },
 
+      showSettingsPayment() {
+        debugger
+        this.settingsPayment = "SettingsPayment"
+        // this.numberButtonSettingsPayments = numberButton
+        // console.log(123);
+      },
+
+      hideSettingsPayment() {
+        this.settingsPayment = "";
+      }
+
     },
 
     mounted() {
       this.$modal.EventBus.$on('show', this.onShow)
       this.$modal.EventBus.$on('hide', this.onHide)
+
+      this.$paymentSettings.EventBus.$on('show', this.showSettingsPayment)
+      this.$paymentSettings.EventBus.$on('hide', this.hideSettingsPayment)
     },
 
     beforeDestroy() {
       this.$modal.EventBus.$off('show', this.onShow)
       this.$modal.EventBus.$off('hide', this.onHide)
+
+      this.$paymentSettings.EventBus.$off('show', this.showSettingsPayment)
+      this.$paymentSettings.EventBus.$off('hide', this.hideSettingsPayment)
     }
   }
 </script>

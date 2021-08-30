@@ -26,7 +26,6 @@
       </transition>
     </div>
     <Dashboard v-if="false" @addPaymentListAP="addPaymentList" />
-    <ModalWindow v-if="false" @addPaymentAP="addPaymentList" />
     <div>
       <button class="btnAdd btnPlus btnYellow btnCenter" @click="addPaymentList">add</button>
     </div>
@@ -45,7 +44,7 @@ export default {
   name: "AddPayment",
   components: {
     Dashboard,
-    ModalWindow: () => import(/* webpackChunkName: 'ModalWindow' */ './ModalWindow.vue')
+
   },
 
 
@@ -66,7 +65,7 @@ export default {
     ...mapMutations(["setPaginationMT", 'addDataToPaymentsListMT', 'setPaginationMT']),
 
     addPaymentList() {
-      debugger
+
       if (this.category && this.value ) this.$router.push({path: `/dashboard/add/payment/${(this.category).toLowerCase()}/?value=${this.value}`})
       if (this.date.length == 0) this.date = this.getCurrentDate()
       // else this.checkDate(this.date.split('.'))
@@ -126,7 +125,6 @@ export default {
     },
 
     // listenerDate(date) {
-    //   debugger
     //   let arrDate = date.split('.');
     //   if (arrDate.length == 3 && (arrDate[0] <= 31 && arrDate[0] >= 1 && arrDate[1] <= 12 && arrDate[1] >= 1 && arrDate[2].length == 4)) {
     //     this.errorDate = false
@@ -159,7 +157,6 @@ export default {
     ...mapActions(["loadCategoriesAC"]),
 
     // test() {
-    //   debugger
     //   let testValue = this.date
     //   this.listenerDate(testValue)
     //   return this.testValue

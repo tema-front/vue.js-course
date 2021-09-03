@@ -5,10 +5,10 @@
     </div>
   <div class="modalClose">
 
-  <button class="closeModalWindow btnAdd btnYellow" @click="getClose">Close</button>
+  <button class="closeModalWindow btnAdd btnYellow" @click="getClose">close</button>
 
   </div>
-    <component :is="settings.name" ref="child"/>
+    <component :is="settings.name" ref="child" :dataForConfigure="settings.settings" />
   </div>
 </template>
 
@@ -18,7 +18,10 @@ export default {
   name: 'ModalWindow',
 
   components: {
-    AddPayment: () => import(/* webpackChunkName: 'AddPayment' */ './AddPayment.vue')
+
+    AddPayment: () => import(/* webpackChunkName: 'AddPayment' */ './AddPayment.vue'),
+    ConfigurePayment: () => import(/* webpackChunkName: 'ConfigurePayment' */ '../components/ConfigurePayment.vue'),
+
   },
 
   props: {
@@ -29,6 +32,7 @@ export default {
 
   methods: {
     getClose() {
+      // console.log(this.settings);
       this.$router.push({path: '/dashboard'})
       this.$modal.hide()
     },
@@ -38,9 +42,10 @@ export default {
     },
 
     onClose(event) {
+      debugger
       if (!(event.target.innerText == "▼" || event.target.innerText == "close")) this.$refs.child.closeModalCategory()  
     }
-  }
+  },
 
 }
 </script>

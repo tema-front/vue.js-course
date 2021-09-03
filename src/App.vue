@@ -16,15 +16,16 @@
       <ModalWindow v-if="modalSettings.name" :settings="modalSettings" />
     </transition>
     <!-- <SettingsPayment v-if="false" :numberBtn="numberButtonSettingsPayments"/> -->
-    
-     <PaymentsDisplay  v-if="false"   :setting="settingsPayment"/>
+    <!-- <PaymentsDisplay  v-if="false"   :setting="settingsPayment"/> -->
+    <ConfigurePayment  v-if="false"   :settings="modalSettings"/>
   </div>
 </template>
 
 <script>
   import ModalWindow from './components/ModalWindow.vue'
   // import SettingsPayment from './components/SettingsPayment.vue'
-  import PaymentsDisplay from './components/PaymentsDisplay.vue'
+  // import PaymentsDisplay from './components/PaymentsDisplay.vue'
+  import ConfigurePayment from './components/ConfigurePayment.vue'
 
 
 
@@ -34,7 +35,8 @@
     components: { 
       ModalWindow,
       // SettingsPayment,
-      PaymentsDisplay
+      // PaymentsDisplay,
+      ConfigurePayment
     },
 
     data: () => ({
@@ -67,7 +69,7 @@
         // console.log(123);
       },
 
-      hideSettingsPayment() {
+      hideSettingsPayment() {  
         this.settingsPayment = "";
       }
 
@@ -143,6 +145,26 @@
     color: rgb(126, 113, 56);
   }
 
+  .enterDatas {
+    height: 50px;
+    margin-bottom: 35px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    color: rgb(126, 113, 56); 
+    border: 3px solid rgb(126, 113, 56);
+    outline: none;
+    font-weight: bold;
+  }
+
+  .enterDatas::-webkit-input-placeholder {
+    color: rgb(197, 181, 107);
+  }
+
+  .enterDatas:nth-child(2) { 
+    position: relative;
+  }
 </style>
 
 <style scoped>

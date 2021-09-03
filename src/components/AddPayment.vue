@@ -190,6 +190,8 @@ export default {
   .enterData-enter, .enterData-leave-to {
     opacity: 0;
   }
+
+
 </style>
 
 <style scoped>
@@ -205,21 +207,6 @@ export default {
 .btnPlus:after {
   content: "\00a0 \00a0 +";
 }
-
-.enterDatas {
-  height: 50px;
-  margin-bottom: 35px;
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box;
-  color: rgb(126, 113, 56); 
-  border: 3px solid rgb(126, 113, 56);
-  outline: none;
-  font-weight: bold;
-}
-
-.enterDatas::-webkit-input-placeholder { color: rgb(197, 181, 107); }
 
 .txtEnterData {
   text-align: center;
@@ -253,11 +240,6 @@ export default {
     background-color: rgb(236, 212, 105);
 }
 
-.enterDatas:nth-child(2) {
-
-  position: relative;
-}
-
 .chooseCategory {
   position: absolute; 
   left: 84%;
@@ -272,7 +254,6 @@ export default {
   width: 100px;
   color: rgb(126, 113, 56); 
   padding: 10px;
-
 }
 
 .modalCategoryPaymentList {

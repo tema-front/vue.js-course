@@ -33,7 +33,7 @@ export default {
   name: "Dashboard",
   components: {
     PaymentsDisplay,
-    ModalWindow: () => import(/* webpackChunkName: 'ModalWindow' */ '../components/ModalWindow.vue')
+    ModalWindow: () => import(/* webpackChunkName: 'ModalWindow' */ '../components/ModalWindow.vue'),
 
     // AddPayment,
     // Dashboard,

@@ -39,8 +39,9 @@ export default new Vuex.Store({
         },
 
         setPaginationMT(state, payload) {
-
+            debugger
             state.quntityButtons = Math.ceil(state.paymentsList.length / 3);
+            if (!state.quntityButtons) state.quntityButtons = 1 
             // state.currentNumberButton = state.quntityButtons
             // this.$route.params.page = payload;
             state.currentNumberButton = payload;
@@ -52,11 +53,7 @@ export default new Vuex.Store({
         },
 
         removePaymentMT(state, payload) {
-            debugger
-            console.log(state.paymentsList);
             state.paymentsList.splice(payload, 1);
-            console.log(state.paymentsList);
-
         }
 
     },

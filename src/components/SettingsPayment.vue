@@ -27,25 +27,39 @@ export default {
 
   methods: {
     ...mapMutations([
-        'removePaymentMT'
+        'removePaymentMT',
+        'setPaginationMT'
     ]),
 
     removePayment() {
-    debugger
-    let itemRemove = this.getCNB
-    itemRemove = itemRemove * 3 - 2 + this.numberBtn - 2
-    this.removePaymentMT(Number(itemRemove))
-    console.log(this.allPayments, this.numberBtn, itemRemove);
+        let itemRemove = this.getCNB
+        itemRemove = itemRemove * 3 - 2 + this.numberBtn - 2
+        this.removePaymentMT(Number(itemRemove))
+        debugger
+        // console.log(this.allPayments, this.numberBtn, itemRemove);
+        this.setPaginationMT(this.setButton());
+    },
+
+    setButton() {
+        debugger
+        if (this.getCNB == 1) return this.getCNB
+        if (this.getCNB < Math.ceil(this.getPL.length / 3)) return this.getCNB
+        else return Math.ceil(this.getPL.length / 3)
     }
   },
 
   computed: {
     ...mapGetters([
-        'getCurrentNumberButtonGT'
+        'getCurrentNumberButtonGT',
+        'getPaymentLists'
     ]),
 
     getCNB() {
         return this.getCurrentNumberButtonGT
+    },
+
+    getPL() {
+        return this.getPaymentLists
     }
   }
 }

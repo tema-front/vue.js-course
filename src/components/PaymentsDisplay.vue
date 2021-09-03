@@ -99,7 +99,7 @@ export default {
 
 
 
-            console.log(settingsBlock);
+            // console.log(settingsBlock);
             console.log(payment, this.getPL, numberButton, this.idBlock);
 
             // this.getPl.findIndex(i => i == payment)    
@@ -129,7 +129,7 @@ export default {
         ...mapGetters([
             'getCurrentNumberButtonGT',
             'getQuntityButtonsGT',
-            'getPaymentLists'
+            'getPaymentLists',
         ]),
 
         getCNB() {
